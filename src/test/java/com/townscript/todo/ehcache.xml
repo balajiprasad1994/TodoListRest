@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>  
+<defaultCache   
+maxElementsInMemory="100"   
+eternal="false"   
+timeToIdleSeconds="120"   
+timeToLiveSeconds="200" />  
+  
+<cache name="user"   
+maxElementsInMemory="100"   
+eternal="false"   
+timeToIdleSeconds="5"   
+timeToLiveSeconds="200" />  
+
+<cache name="org.hibernate.cache.StandardQueryCache"
+    maxElementsInMemory="5"
+    eternal="false"      
+    timeToLiveSeconds="120"
+    memoryStoreEvictionPolicy="LRU">
+</cache>
+
+<cache name="org.hibernate.cache.UpdateTimestampsCache" 
+	maxElementsInMemory="5000" 
+	eternal="true"
+	memoryStoreEvictionPolicy="LRU">
+</cache>
+
+</ehcache>

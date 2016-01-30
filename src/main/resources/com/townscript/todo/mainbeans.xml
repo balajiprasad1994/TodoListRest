@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 	xmlns="http://www.springframework.org/schema/beans"  
+		xmlns:context="http://www.springframework.org/schema/context" 
+    	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    	xmlns:aop="http://www.springframework.org/schema/aop"
+    	xmlns:tx="http://www.springframework.org/schema/tx"
+    	xsi:schemaLocation="http://www.springframework.org/schema/beans    
+    					http://www.springframework.org/schema/beans/spring-beans.xsd
+        				http://www.springframework.org/schema/aop 
+        				http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+        				http://www.springframework.org/schema/tx 
+        				http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+		default-lazy-init="true">
+        				
+    <!-- xmlns:p="http://www.springframework.org/schema/p" -->    
+ 	<!-- <context:component-scan base-package="com.townscript.musicapi" /> -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/todolist" />
+        <property name="username" value="root" />
+        <property name="password" value="mysql" />
+    </bean>
+ 
+    <bean id="sessionFactory"
+        class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="annotatedClasses">
+            <list>
+                <value>com.townscript.todo.model.User</value>
+                <value>com.townscript.todo.model.Task</value>
+                <value>com.townscript.todo.model.Tag</value>
+                <value>com.townscript.todo.model.Category</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop> 
+                <prop key="hibernate.cache.use_query_cache">true</prop>
+                <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</prop>
+                <prop key="hibernate.hbm2ddl.auto">validate</prop> 
+<!--                 <prop key="hibernate.cache.region.factory_class"> 
+     net.sf.ehcache.hibernate.EhCacheRegionFactory</prop> -->
+            </props>
+        </property>
+    </bean>
+     
+    <bean id="hibernateTransactionManager"  
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">  
+        <property name="sessionFactory" ref="sessionFactory" />  
+    </bean>  
+     
+    <bean id="UserDaoHnateImpl" class="com.townscript.todo.dao.user.UserDaoHnateImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="TaskDaoHnateImpl" class="com.townscript.todo.dao.task.TaskDaoHnateImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="TagDaoHnateImpl" class="com.townscript.todo.dao.tag.TagDaoHnateImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="CategoryDaoHnateImpl" class="com.townscript.todo.dao.category.CategoryDaoHnateImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="UserServiceImpl" class="com.townscript.todo.service.user.UserServiceImpl">
+        <property name="UserDao" ref="UserDaoHnateImpl" />
+        <property name="TaskDao" ref="TaskDaoHnateImpl" />
+        <property name="TagDao" ref="TagDaoHnateImpl" />
+        <property name="CategoryDao" ref="CategoryDaoHnateImpl" />
+    </bean>
+    <bean id="TaskServiceImpl" class="com.townscript.todo.service.task.TaskServiceImpl">
+        <property name="TaskDao" ref="TaskDaoHnateImpl" />
+        <property name="TagDao" ref="TagDaoHnateImpl" />
+        <property name="CategoryDao" ref="CategoryDaoHnateImpl" />
+    </bean>
+    <bean id="TagServiceImpl" class="com.townscript.todo.service.tag.TagServiceImpl">
+        <property name="TagDao" ref="TagDaoHnateImpl" />
+    </bean>
+     <bean id="CategoryServiceImpl" class="com.townscript.todo.service.category.CategoryServiceImpl">
+        <property name="CategoryDao" ref="CategoryDaoHnateImpl" />
+    </bean>
+    
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate" lazy-init="true">
+              <constructor-arg>
+                      <ref bean="sessionFactory" />
+              </constructor-arg>
+    </bean>
+    <tx:annotation-driven transaction-manager="hibernateTransactionManager" />  
+    <tx:annotation-driven proxy-target-class="true"/>
+    
+</beans>
